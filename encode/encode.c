@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 65536
 
 /**
  * 使用异或加密/解密文件
@@ -82,19 +82,13 @@ int xor_encrypt_file(const char *input_file, const char *output_file, const char
     fclose(out);
     
     // 如果使用了临时文件，将其重命名为目标文件
+    // rename 在 Linux 上是原子操作，会直接覆盖目标文件，无需先 remove
     if (use_temp_file && result == 0) {
-        // 先删除原始文件（如果存在）
-        remove(output_file);
-        
-        // 重命名临时文件为目标文件
         if (rename(temp_file, output_file) != 0) {
-            fprintf(stderr, "无法重命名临时文件 '%s' 到 '%s': %s\n", 
+            fprintf(stderr, "无法重命名临时文件 '%s' 到 '%s': %s\n",
                     temp_file, output_file, strerror(errno));
             result = 6;
-            // 尝试删除临时文件
             remove(temp_file);
-        } else {
-            printf("临时文件已成功重命名为: %s\n", output_file);
         }
     }
     
@@ -128,7 +122,6 @@ int main(int argc, char *argv[]) {
     const char *password = argv[3];
     
     printf("正在处理文件: %s -> %s\n", input_file, output_file);
-    printf("使用密码: %s\n", password);
     
     // 执行加密/解密
     int result = xor_encrypt_file(input_file, output_file, password);
