@@ -14,7 +14,7 @@ gcc -o encode/encode encode/encode.c && ./encode/encode <input> <output> <passwo
 gcc -o template_match/template_match template_match/template_match.c -lpng && ./template_match/template_match <large.png> <small.png>
 
 # Uppercase string converter
-gcc -o upper-chars upper-chars.c && ./upper-chars "some string"
+gcc -o upper-chars/upper-chars upper-chars/upper-chars.c && ./upper-chars/upper-chars "some string"
 ```
 
 ## Project Overview
